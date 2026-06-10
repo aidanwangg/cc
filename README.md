@@ -1,16 +1,15 @@
 # ♟ Chess Coach
 
-Paste a PGN, get a conversational post-game breakdown: what went wrong, why,
-and one concrete thing to work on.
+An AI-powered chess coaching platform that automatically syncs with a user's Chess.com account to provide highly contextual, conversational post-game reviews.
 
-## Architecture
+## Current Architecture
 
 ```
-React (Vite) ──▶ FastAPI ──▶ python-chess (PGN parsing)
+Chess.com API ──▶ FastAPI ──▶ python-chess (PGN parsing)
                     │
                     ├──▶ Stockfish (optional)   ← per-move evals, blunder detection
                     │         │
-                    ├──▶ Claude (Opus 4.8)      ← reasoning/explanation layer
+                    ├──▶ Claude (Haiku 4.5)      ← reasoning/explanation layer
                     │         structured grounding data in, typed CoachReport out
                     │
                     └──▶ SQLAlchemy ──▶ PostgreSQL (SQLite for local dev)
