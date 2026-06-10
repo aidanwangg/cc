@@ -1,0 +1,168 @@
+:root {
+  color-scheme: light;
+  font-family: "Georgia", "Times New Roman", serif;
+  --bg: #f6f3ec;
+  --ink: #2b2620;
+  --accent: #a4552e;
+  --card: #fffdf8;
+  --border: #ddd5c6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  border-right: 1px solid var(--border);
+  padding: 1.25rem;
+  background: var(--card);
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  font-size: 1.05rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history-item {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 0.2rem;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.history-item:hover {
+  background: var(--bg);
+}
+
+.main {
+  padding: 2rem 3rem;
+  max-width: 860px;
+}
+
+h1 {
+  margin-bottom: 0.25rem;
+}
+
+textarea {
+  width: 100%;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.9rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.75rem;
+  gap: 1rem;
+}
+
+select,
+button {
+  font: inherit;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  cursor: pointer;
+}
+
+button[type="submit"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.error {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #c0392b;
+  border-radius: 6px;
+  background: #fdecea;
+  color: #8c2318;
+}
+
+.report {
+  margin-top: 2rem;
+}
+
+.report header h2 {
+  margin-bottom: 0.2rem;
+  font-style: italic;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+}
+
+.turning-point {
+  border-left: 4px solid var(--accent);
+}
+
+.turning-point h3,
+.takeaway h3 {
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+.breakdown p {
+  line-height: 1.6;
+}
+
+.feedback {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.muted {
+  color: #7a7164;
+}
+
+.small {
+  font-size: 0.8rem;
+}
+
+code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  background: var(--bg);
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+}
