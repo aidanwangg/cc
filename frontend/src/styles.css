@@ -105,6 +105,33 @@ button:disabled {
   cursor: default;
 }
 
+.import {
+  margin-bottom: 1.25rem;
+}
+
+.import-form {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.import-form input {
+  font: inherit;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+.import-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
 .error {
   margin-top: 1rem;
   padding: 0.75rem 1rem;

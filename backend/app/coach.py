@@ -128,23 +128,50 @@ class CoachError(RuntimeError):
     pass
 
 
+def model_for_tier(tier: str) -> str:
+    """fast → Haiku (cheap, relies on engine grounding), deep → Opus."""
+    return settings.fast_model if tier == "fast" else settings.anthropic_model
+
+
+def thinking_params(model: str) -> dict:
+    """Request params that are model-gated.
+
+    Adaptive thinking is a 4.6+ feature; Haiku 4.5 rejects it (and the effort
+    parameter), so the fast tier sends neither. The grounded explanation task
+    doesn't need extended reasoning anyway.
+    """
+    if model.startswith("claude-haiku"):
+        return {}
+    return {"thinking": {"type": "adaptive"}}
+
+
 def get_coaching_report(
     parsed: ParsedGame,
     evals: list[MoveEval] | None,
     skill_level: SkillLevel,
-    coached_player: str = "the player with the White pieces",
+    coached_player: str,
+    model: str,
 ) -> CoachReport:
     client = anthropic.Anthropic()
     prompt = build_game_summary(parsed, evals, coached_player, skill_level)
 
-    response = client.messages.parse(
-        model=settings.anthropic_model,
-        max_tokens=16000,
-        thinking={"type": "adaptive"},
-        system=COACH_SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": prompt}],
-        output_format=CoachReport,
-    )
+    try:
+        response = client.messages.parse(
+            model=model,
+            max_tokens=16000,
+            system=COACH_SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": prompt}],
+            output_format=CoachReport,
+            **thinking_params(model),
+        )
+    except TypeError as e:
+        # The SDK raises TypeError (not AuthenticationError) when no
+        # credentials are configured at all.
+        if "authentication method" in str(e):
+            raise CoachError(
+                "Anthropic credentials are not configured — set ANTHROPIC_API_KEY."
+            ) from e
+        raise
 
     if response.stop_reason == "refusal":
         raise CoachError("The model declined to analyze this game.")

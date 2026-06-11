@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from .. import models
 from ..chess_analysis import PGNError, evaluate_game, parse_pgn
-from ..coach import CoachError, get_coaching_report
+from ..coach import CoachError, get_coaching_report, model_for_tier
 from ..config import settings
 from ..db import get_db
 from ..schemas import (
@@ -44,8 +44,12 @@ def analyze_game(req: AnalyzeRequest, db: Session = Depends(get_db)):
         except Exception:
             logger.exception("Stockfish analysis failed; continuing without evals")
 
+    coached_name = parsed.white if req.coached_side == "white" else parsed.black
+    coached_player = f"{coached_name}, playing {req.coached_side.capitalize()}"
+    model = model_for_tier(req.tier)
+
     try:
-        report = get_coaching_report(parsed, evals, req.skill_level)
+        report = get_coaching_report(parsed, evals, req.skill_level, coached_player, model)
     except CoachError as e:
         raise HTTPException(status_code=502, detail=str(e))
     except anthropic.AuthenticationError:
@@ -62,7 +66,7 @@ def analyze_game(req: AnalyzeRequest, db: Session = Depends(get_db)):
         skill_level=req.skill_level,
     )
     analysis = models.Analysis(
-        model=settings.anthropic_model,
+        model=model,
         engine_used=evals is not None,
         engine_depth=settings.stockfish_depth if evals is not None else None,
         evals=[dataclasses.asdict(e) for e in evals] if evals is not None else None,
@@ -121,6 +125,7 @@ def _to_response(game: models.Game, analysis: models.Analysis) -> AnalysisRespon
         opening=game.opening,
         skill_level=game.skill_level,
         engine_used=analysis.engine_used,
+        model=analysis.model,
         evals=analysis.evals,
         report=CoachReport.model_validate(analysis.report),
         created_at=game.created_at,

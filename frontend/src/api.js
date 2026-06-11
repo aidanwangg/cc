@@ -17,11 +17,21 @@ async function request(path, options = {}) {
   return res.json();
 }
 
-export const analyzeGame = (pgn, skillLevel) =>
+export const analyzeGame = (pgn, skillLevel, coachedSide, tier) =>
   request("/api/games/analyze", {
     method: "POST",
-    body: JSON.stringify({ pgn, skill_level: skillLevel }),
+    body: JSON.stringify({
+      pgn,
+      skill_level: skillLevel,
+      coached_side: coachedSide,
+      tier,
+    }),
   });
+
+export const fetchChesscomGames = (username, count = 10) =>
+  request(
+    `/api/chesscom/${encodeURIComponent(username)}/recent?count=${count}`,
+  );
 
 export const listGames = () => request("/api/games");
 

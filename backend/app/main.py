@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
 from .db import Base, engine
-from .routers import games
+from .routers import chesscom, games
 
 Base.metadata.create_all(bind=engine)
 
@@ -17,6 +17,7 @@ app.add_middleware(
 )
 
 app.include_router(games.router)
+app.include_router(chesscom.router)
 
 
 @app.get("/api/health")

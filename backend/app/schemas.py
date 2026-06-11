@@ -6,9 +6,14 @@ from pydantic import BaseModel, Field
 SkillLevel = Literal["beginner", "intermediate", "advanced"]
 
 
+AnalysisTier = Literal["fast", "deep"]
+
+
 class AnalyzeRequest(BaseModel):
     pgn: str
     skill_level: SkillLevel = "intermediate"
+    coached_side: Literal["white", "black"] = "white"
+    tier: AnalysisTier = "fast"
 
 
 class TurningPoint(BaseModel):
@@ -54,6 +59,7 @@ class AnalysisResponse(BaseModel):
     opening: str | None
     skill_level: SkillLevel
     engine_used: bool
+    model: str
     evals: list[MoveEvalOut] | None
     report: CoachReport
     created_at: datetime
@@ -73,3 +79,15 @@ class GameSummary(BaseModel):
 class FeedbackRequest(BaseModel):
     rating: Literal["helpful", "not_helpful"]
     note: str | None = None
+
+
+class ChesscomGame(BaseModel):
+    white: str
+    black: str
+    white_rating: int | None
+    black_rating: int | None
+    result: str
+    end_time: int | None  # unix timestamp
+    time_class: str | None
+    user_side: Literal["white", "black"] | None
+    pgn: str
