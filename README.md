@@ -37,8 +37,11 @@ the move list itself.
   (`CoachReport`: opening, headline, turning point, breakdown, one thing to
   work on) via the Messages API `output_format`, so the frontend renders
   typed fields instead of scraping prose.
-- **Adaptive thinking** is enabled so the model reasons through the game
-  before writing the report.
+- **Model tiering**: `tier: "fast"` (default) uses Claude Haiku 4.5 — ~5x
+  cheaper, and viable precisely *because* the hard part (finding the turning
+  point) is done by Stockfish, leaving the LLM a grounded explanation task.
+  `tier: "deep"` uses Opus 4.8 with adaptive thinking; request params are
+  model-gated since Haiku rejects adaptive thinking and effort.
 
 ## Running it
 
@@ -80,7 +83,8 @@ synthetic evals, no Stockfish needed), and prompt construction.
 
 | Method | Path                       | Description                                  |
 |--------|----------------------------|----------------------------------------------|
-| POST   | `/api/games/analyze`       | `{pgn, skill_level}` → full coaching report  |
+| POST   | `/api/games/analyze`       | `{pgn, skill_level, coached_side, tier}` → full coaching report |
+| GET    | `/api/chesscom/{user}/recent` | Player's recent Chess.com games (public API, no auth) |
 | GET    | `/api/games`               | Past games with headlines                    |
 | GET    | `/api/games/{id}`          | A stored game's latest analysis              |
 | POST   | `/api/games/{id}/feedback` | `{rating, note}` thumbs up/down on a report  |
@@ -95,6 +99,9 @@ synthetic evals, no Stockfish needed), and prompt construction.
 - [x] Structured `CoachReport` output
 - [x] Opening identification (PGN header, else Claude names it)
 - [x] Game + feedback history (PostgreSQL-ready via SQLAlchemy)
+- [x] Chess.com import: type a username, pick a recent game — the coached
+      side is detected automatically
+- [x] Fast (Haiku) / deep (Opus) analysis tiers
 - [ ] "Study plan" generator from your last 5 games
 - [ ] Streaming the breakdown token-by-token to the UI (SSE)
 - [ ] Alembic migrations (tables are auto-created for now)

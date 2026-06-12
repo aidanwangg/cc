@@ -12,7 +12,10 @@ class Settings(BaseSettings):
     """
 
     database_url: str = "sqlite:///./chess_coach.db"
+    # "deep" tier: best quality, used when explicitly requested.
     anthropic_model: str = "claude-opus-4-8"
+    # "fast" tier (default): ~5x cheaper; fine for engine-grounded explanation.
+    fast_model: str = "claude-haiku-4-5"
     stockfish_path: str | None = None
     stockfish_depth: int = 12
     # Cap engine analysis so a 300-move PGN can't stall a request.
