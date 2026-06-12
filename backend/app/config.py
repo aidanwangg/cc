@@ -1,6 +1,14 @@
 import shutil
+from pathlib import Path
 
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
+
+# Load backend/.env into the process environment before Settings is built.
+# This makes both the app's own settings (DATABASE_URL, etc.) and the
+# Anthropic SDK's ANTHROPIC_API_KEY available from a single .env file,
+# regardless of the directory uvicorn is launched from.
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 
 class Settings(BaseSettings):
