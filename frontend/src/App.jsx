@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import {
   analyzeGame,
-  fetchChesscomGames,
   getGame,
   getPassword,
   listGames,
   sendFeedback,
   setPassword,
 } from "./api.js";
+import { fetchChesscomGamesClient } from "./chesscom.js";
 
 const SKILL_LEVELS = ["beginner", "intermediate", "advanced"];
 
@@ -166,7 +166,7 @@ function ChesscomImport({ onPick }) {
     setFetching(true);
     setError(null);
     try {
-      setGames(await fetchChesscomGames(username.trim()));
+      setGames(await fetchChesscomGamesClient(username.trim()));
     } catch (err) {
       setError(err.message);
       setGames(null);
