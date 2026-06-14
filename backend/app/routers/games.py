@@ -2,7 +2,7 @@ import dataclasses
 import logging
 
 import anthropic
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -11,6 +11,8 @@ from ..chess_analysis import PGNError, evaluate_game, parse_pgn
 from ..coach import CoachError, get_coaching_report, model_for_tier
 from ..config import settings
 from ..db import get_db
+from ..limiter import limiter
+from ..security import require_password
 from ..schemas import (
     AnalysisResponse,
     AnalyzeRequest,
@@ -21,11 +23,14 @@ from ..schemas import (
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/games", tags=["games"])
+router = APIRouter(
+    prefix="/api/games", tags=["games"], dependencies=[Depends(require_password)]
+)
 
 
 @router.post("/analyze", response_model=AnalysisResponse)
-def analyze_game(req: AnalyzeRequest, db: Session = Depends(get_db)):
+@limiter.limit(settings.analyze_rate_limit)
+def analyze_game(request: Request, req: AnalyzeRequest, db: Session = Depends(get_db)):
     try:
         parsed = parse_pgn(req.pgn)
     except PGNError as e:

@@ -66,6 +66,21 @@ h1 {
   margin-bottom: 0.25rem;
 }
 
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.access-input {
+  font: inherit;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+}
+
 textarea {
   width: 100%;
   font-family: ui-monospace, "SF Mono", Menlo, monospace;

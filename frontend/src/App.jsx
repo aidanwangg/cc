@@ -3,8 +3,10 @@ import {
   analyzeGame,
   fetchChesscomGames,
   getGame,
+  getPassword,
   listGames,
   sendFeedback,
+  setPassword,
 } from "./api.js";
 
 const SKILL_LEVELS = ["beginner", "intermediate", "advanced"];
@@ -18,12 +20,20 @@ export default function App() {
   const [error, setError] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [history, setHistory] = useState([]);
+  const [password, setPasswordState] = useState(getPassword());
+
+  const onPasswordChange = (value) => {
+    setPasswordState(value);
+    setPassword(value);
+  };
 
   const refreshHistory = () => listGames().then(setHistory).catch(() => {});
 
+  // Reload history on mount and whenever the password changes (so the sidebar
+  // populates once a valid password is entered).
   useEffect(() => {
-    refreshHistory();
-  }, []);
+    listGames().then(setHistory).catch(() => {});
+  }, [password]);
 
   const onAnalyze = async (e) => {
     e.preventDefault();
@@ -70,7 +80,17 @@ export default function App() {
       </aside>
 
       <main className="main">
-        <h1>♟ Chess Coach</h1>
+        <div className="topbar">
+          <h1>♟ Chess Coach</h1>
+          <input
+            type="password"
+            className="access-input"
+            value={password}
+            onChange={(e) => onPasswordChange(e.target.value)}
+            placeholder="access password"
+            aria-label="Access password"
+          />
+        </div>
         <p className="muted">
           Paste a PGN and get a post-game breakdown: what went wrong, why, and
           one thing to work on.

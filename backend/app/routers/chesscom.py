@@ -1,10 +1,13 @@
 import httpx
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from ..chesscom import ChesscomUserNotFound, fetch_recent_games
 from ..schemas import ChesscomGame
+from ..security import require_password
 
-router = APIRouter(prefix="/api/chesscom", tags=["chesscom"])
+router = APIRouter(
+    prefix="/api/chesscom", tags=["chesscom"], dependencies=[Depends(require_password)]
+)
 
 
 @router.get("/{username}/recent", response_model=list[ChesscomGame])

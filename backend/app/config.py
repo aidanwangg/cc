@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     # Cap engine analysis so a 300-move PGN can't stall a request.
     stockfish_max_plies: int = 240
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    # Shared-password gate for the API. Empty = gate disabled (local dev).
+    app_password: str = ""
+    # Per-IP cap on the paid analyze endpoint (slowapi syntax).
+    analyze_rate_limit: str = "30/hour"
 
     def resolve_stockfish(self) -> str | None:
         return self.stockfish_path or shutil.which("stockfish")

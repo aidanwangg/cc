@@ -43,6 +43,14 @@ the move list itself.
   `tier: "deep"` uses Opus 4.8 with adaptive thinking; request params are
   model-gated since Haiku rejects adaptive thinking and effort.
 
+## Deployment
+
+See **[DEPLOY.md](DEPLOY.md)** for one-click deployment to Render (Docker
+backend with Stockfish, managed Postgres, static frontend). Public access is
+gated by a shared password (`APP_PASSWORD`) and the paid analyze endpoint is
+rate-limited per IP (`ANALYZE_RATE_LIMIT`), so deploying it doesn't expose
+your Claude credits to the open internet.
+
 ## Running it
 
 ### Backend
@@ -102,6 +110,8 @@ synthetic evals, no Stockfish needed), and prompt construction.
 - [x] Chess.com import: type a username, pick a recent game — the coached
       side is detected automatically
 - [x] Fast (Haiku) / deep (Opus) analysis tiers
+- [x] Deployable to Render: Dockerized backend (Stockfish included),
+      shared-password gate, per-IP rate limiting on the paid endpoint
 - [ ] "Study plan" generator from your last 5 games
 - [ ] Streaming the breakdown token-by-token to the UI (SSE)
 - [ ] Alembic migrations (tables are auto-created for now)
